@@ -1,5 +1,3 @@
-
-
 #!/bin/bash
 
 install_dependencies() {
@@ -9,7 +7,7 @@ install_dependencies() {
     }
 
     # List of commands to check and install
-    commands=("go" "python3" "node" "npm")
+    commands=("python3" "node" "npm")
 
     # Loop through the commands and install if not present
     for cmd in "${commands[@]}"; do
@@ -24,63 +22,59 @@ install_dependencies() {
 }
 install_dependencies
 
-
-export_gopath(){
-echo "exporting GOPATH"
-	export GOPATH=$HOME/go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-echo "DONE exporting"
-echo $GOPATH
-
+export_gopath() {
+    sudo snap install go --classic
+    echo "exporting GOPATH"
+    echo 'export GOPATH=$HOME/go' >> ~/.bashrc
+    export PATH=$PATH:$HOME/go/bin >> ~/.bashrc
+    source ~/.bashrc
+    echo "DONE exporting"
+    echo $GOPATH
 }
 
 export_gopath
-
-# Call the function
-
 
 installpkg() {
     # Clone and install massdns
     echo "Installing massdns..."
     git clone https://github.com/blechschmidt/massdns.git
     cd massdns || exit
-    sudo make install -y
     make
     cd ..
 
     # Install DNS-related tools
     echo "Installing DNS-related tools..."
-    go get -u github.com/projectdiscovery/dnsx/cmd/dnsx@latest
-    go get -u github.com/hakluke/hakoriginfinder@latest
+    go install github.com/projectdiscovery/dnsx/cmd/dnsx@latest
+    go install github.com/hakluke/hakoriginfinder@latest
     go install github.com/hakluke/hakrevdns@latest
-    go get -u github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest
-    go get -u github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest
+    go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest
+    go install github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest
 
     # Install HTTP-related tools
     echo "Installing HTTP-related tools..."
-    go get -u github.com/projectdiscovery/httpx/cmd/httpx@latest
+    go install github.com/projectdiscovery/httpx/cmd/httpx@latest
     go install github.com/ffuf/ffuf/v2@latest
-    go get -u github.com/tomnomnom/waybackurls@latest
+    go install github.com/tomnomnom/waybackurls@latest
+    go install github.com/tomnomnom/assetfinder@latest
 
     # Install subdomain discovery tools
     echo "Installing subdomain discovery tools..."
-    go get -u github.com/OWASP/Amass/cmd/amass@latest
-    go get -u github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+    go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
 
     # Install other tools
     echo "Installing other tools..."
-    go get -u github.com/tomnomnom/gf@latest
+    go install github.com/tomnomnom/gf@latest
     go install github.com/d3mondev/puredns/v2@latest
     go install github.com/projectdiscovery/katana/cmd/katana@latest
 
     # Install Python tools
     echo "Installing Python tools..."
-    pip3 install py-altdns==1.0.2
-    pip3 install dirsearch
+    sudo apt-get install -y python3-pip
+   sudo pip3 install py-altdns==1.0.2
+   sudo pip3 install dirsearch
 
     echo "Installation complete."
 }
 
 # Call the function
 installpkg
-
